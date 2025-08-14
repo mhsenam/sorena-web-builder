@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import ModernLivePreview from "@/components/ModernLivePreview";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
-import ExportButtons from "@/components/ExportButtons";
 import { GradientBackground } from "@/components/GradientBackground";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,9 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function Home() {
-  const [generatedData, setGeneratedData] = useState<any>(null);
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const router = useRouter();
   const headerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -36,9 +35,10 @@ export default function Home() {
   }, []);
 
   const handleResult = (data: any) => {
-    setGeneratedData(data);
     if (typeof window !== "undefined") {
       (window as any).__generatedData = data;
+      // Navigate to preview page
+      router.push("/preview");
     }
   };
 
@@ -98,61 +98,42 @@ export default function Home() {
       handleResult({ ...data, isLoading: false });
     } catch (error: any) {
       console.error("Generation error:", error);
-      setGeneratedData(null);
 
       // Show more specific error message
       const errorMessage = error.message || "Failed to generate website";
       alert(errorMessage);
-    } finally {
       setIsGenerating(false);
     }
   };
 
-  if (generatedData) {
+  // Show loading modal when generating
+  if (isGenerating) {
     return (
-      <div className="min-h-screen w-full">
+      <div className="min-h-screen w-full flex items-center justify-center">
         <GradientBackground />
-        <div className="relative z-10 p-8">
-          {/* Navigation Bar */}
-          <div className="mb-6">
-            {/* Action Buttons Below Navbar */}
-            {!generatedData.isLoading && (
-              <div className="mt-4 flex justify-center">
-                <ExportButtons files={generatedData.files?.files || []} />
+        <Card className="bg-background/95 backdrop-blur-xl border-0 shadow-2xl">
+          <CardContent className="p-12 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="flex space-x-2">
+                <div className="w-3 h-3 bg-primary rounded-full animate-bounce"></div>
+                <div
+                  className="w-3 h-3 bg-primary rounded-full animate-bounce"
+                  style={{ animationDelay: "0.1s" }}
+                ></div>
+                <div
+                  className="w-3 h-3 bg-primary rounded-full animate-bounce"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
               </div>
-            )}
-          </div>
-
-          <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-0 shadow-2xl">
-            <CardContent className="p-0">
-              {generatedData.isLoading ? (
-                <div className="p-12 text-center">
-                  <div className="flex justify-center mb-6">
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 bg-purple-600 rounded-full animate-bounce"></div>
-                      <div
-                        className="w-3 h-3 bg-purple-600 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></div>
-                      <div
-                        className="w-3 h-3 bg-purple-600 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></div>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                    Creating your website...
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    This may take a few moments
-                  </p>
-                </div>
-              ) : (
-                <ModernLivePreview initial={generatedData} />
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">
+              Creating your website...
+            </h3>
+            <p className="text-muted-foreground">
+              This may take a few moments
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }

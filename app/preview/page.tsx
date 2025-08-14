@@ -58,15 +58,15 @@ export default function Preview() {
         <GradientBackground />
         <div className="flex-1 flex items-center justify-center px-4 py-20">
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl border-0">
+            <Card className="bg-background/95 backdrop-blur-xl shadow-2xl">
               <CardContent className="text-center py-16">
-                <div className="inline-flex p-4 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
-                  <Eye className="h-16 w-16 text-gray-400 dark:text-gray-500" />
+                <div className="inline-flex p-4 rounded-full bg-muted mb-4">
+                  <Eye className="h-16 w-16 text-muted-foreground" />
                 </div>
-                <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                <h2 className="text-2xl font-semibold mb-2">
                   No Preview Available
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-muted-foreground mb-6">
                   Generate a website first to see the preview here.
                 </p>
                 <Button asChild>
@@ -92,10 +92,10 @@ export default function Preview() {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-3xl font-bold">
                 Website Preview
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 Review your generated website
               </p>
             </div>
@@ -112,7 +112,7 @@ export default function Preview() {
             ref={(el) => {
               if (el) cardsRef.current[0] = el;
             }}
-            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl border-0"
+            className="bg-background/95 backdrop-blur-xl shadow-2xl"
           >
             <CardHeader>
               <CardTitle className="text-xl">Live Preview</CardTitle>
@@ -121,7 +121,7 @@ export default function Preview() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t">
                 <LivePreview initial={data} />
               </div>
             </CardContent>
@@ -133,7 +133,7 @@ export default function Preview() {
               ref={(el) => {
                 if (el) cardsRef.current[1] = el;
               }}
-              className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl border-0"
+              className="bg-background/95 backdrop-blur-xl shadow-2xl"
             >
               <CardHeader>
                 <CardTitle>File Structure</CardTitle>
@@ -146,24 +146,24 @@ export default function Preview() {
                   {data.files.files.map((file: any, idx: number) => (
                     <div
                       key={idx}
-                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 bg-white/50 dark:bg-gray-900/50"
+                      className="border rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 bg-card/50"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <FileCode2 className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <FileCode2 className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                          <span className="text-sm font-medium">
                             {file.path}
                           </span>
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-muted-foreground">
                           {(file.content.length / 1024).toFixed(1)} KB
                         </span>
                       </div>
                       <details className="mt-2">
-                        <summary className="cursor-pointer text-sm text-purple-600 dark:text-purple-400 hover:underline">
+                        <summary className="cursor-pointer text-sm text-primary hover:underline">
                           View content
                         </summary>
-                        <pre className="mt-2 p-3 bg-gray-50 dark:bg-gray-800 rounded text-xs overflow-x-auto max-h-40 text-gray-800 dark:text-gray-200">
+                        <pre className="mt-2 p-3 bg-muted rounded text-xs overflow-x-auto max-h-40 font-mono">
                           {file.content.substring(0, 500)}
                           {file.content.length > 500 && "..."}
                         </pre>

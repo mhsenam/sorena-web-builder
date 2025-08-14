@@ -28,27 +28,58 @@ export default function LivePreview({ initial }: LivePreviewProps) {
 
   const { plan } = data
 
+  // Get the HTML file content
+  const htmlFile = data.files?.files?.find((f: any) => f.path === 'index.html' || f.path.endsWith('.html'));
+  
+  // Get CSS content if available
+  const cssFile = data.files?.files?.find((f: any) => f.path === 'styles.css' || f.path.endsWith('.css'));
+  
+  // Get JS content if available  
+  const jsFile = data.files?.files?.find((f: any) => f.path === 'script.js' || f.path.endsWith('.js'));
+  
+  // Combine HTML with CSS and JS inline for proper rendering
+  const renderHtml = () => {
+    if (!htmlFile) return '';
+    
+    let htmlContent = htmlFile.content;
+    
+    // Inject CSS inline if it exists
+    if (cssFile && !htmlContent.includes('<style>')) {
+      const styleTag = `<style>${cssFile.content}</style>`;
+      htmlContent = htmlContent.replace('</head>', `${styleTag}</head>`);
+    }
+    
+    // Inject JS inline if it exists
+    if (jsFile && !htmlContent.includes('<script>')) {
+      const scriptTag = `<script>${jsFile.content}</script>`;
+      htmlContent = htmlContent.replace('</body>', `${scriptTag}</body>`);
+    }
+    
+    return htmlContent;
+  };
+
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg">
-      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg overflow-hidden shadow-lg">
+      <div className="bg-muted px-4 py-2 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
-          <span className="text-sm text-gray-600 dark:text-gray-400">{plan.meta?.title || 'Preview'}</span>
+          <span className="text-sm text-muted-foreground">{plan.meta?.title || 'Preview'}</span>
           <div className="w-20"></div>
         </div>
       </div>
       
-      <div className="bg-white dark:bg-gray-900 h-[600px] overflow-hidden">
+      <div className="bg-white h-[600px] overflow-hidden">
         {/* Render actual HTML if available */}
-        {data.files?.files?.find((f: any) => f.path.endsWith('.html')) ? (
+        {htmlFile ? (
           <iframe
-            srcDoc={data.files.files.find((f: any) => f.path.endsWith('.html'))?.content || ''}
-            className="w-full h-full border-0"
-            sandbox="allow-scripts allow-forms allow-modals allow-popups"
+            srcDoc={renderHtml()}
+            className="w-full h-full border-0 bg-white"
+            sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin"
+            title="Website Preview"
           />
         ) : (
           <div className="p-6 space-y-6 h-full overflow-y-auto">
