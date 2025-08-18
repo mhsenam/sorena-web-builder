@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     
     const buffer = await zipFiles(validatedData.files)
     
-    return new NextResponse(buffer, {
+    return new NextResponse(buffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'application/zip',
